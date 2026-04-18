@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: ./frontend
+    container_name: voting-frontend
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  api:
+    build: ./api
+    container_name: voting-api
+    ports:
+      - "8080:8080"
+    environment:
+      - REDIS_HOST=redis
+      - POSTGRES_HOST=postgres
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  worker:
+    build: ./worker
+    container_name: voting-worker
+    environment:
+      - REDIS_HOST=redis
+      - POSTGRES_HOST=postgres
+    depends_on:
+      - redis
+      - postgres
+      - api
+    networks:
+      - app-network
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: voting-redis
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: voting-postgres
+    environment:
+      - POSTGRES_USER=voting_app
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=votingdb
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge

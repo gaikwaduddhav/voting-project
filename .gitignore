@@ -1,0 +1,8 @@
+secrets/
+*.log
+*.pid
+*.pyc
+__pycache__/
+node_modules/
+.env
+.DS_Store
