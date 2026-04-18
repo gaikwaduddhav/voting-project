@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voting App</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🗳️ Voting System</h1>
+        
+        <!-- Show if user has already voted -->
+        <div id="already-voted" class="warning-message" style="display: none;">
+            ⚠️ You have already voted! Only one vote per device is allowed.
+        </div>
+        
+        <div class="voting-section" id="voting-section">
+            <h2>Cast Your Vote</h2>
+            <p class="info-text">You can only vote once from this device.</p>
+            <div class="candidates">
+                <button class="candidate-btn" data-candidate="candidate_a" onclick="submitVote('candidate_a')">
+                    🐱 Candidate A
+                </button>
+                <button class="candidate-btn" data-candidate="candidate_b" onclick="submitVote('candidate_b')">
+                    🐶 Candidate B
+                </button>
+                <button class="candidate-btn" data-candidate="candidate_c" onclick="submitVote('candidate_c')">
+                    🦊 Candidate C
+                </button>
+            </div>
+            <div id="vote-message" class="message"></div>
+        </div>
+
+        <!-- Results Section (hidden until after voting) -->
+        <div class="results-section" id="results-section" style="display: none;">
+            <h2>Live Results</h2>
+            <div id="results">
+                <div class="result-item">
+                    <span>Candidate A:</span>
+                    <span id="votes-a">0</span>
+                    <div class="progress-bar">
+                        <div id="progress-a" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="result-item">
+                    <span>Candidate B:</span>
+                    <span id="votes-b">0</span>
+                    <div class="progress-bar">
+                        <div id="progress-b" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="result-item">
+                    <span>Candidate C:</span>
+                    <span id="votes-c">0</span>
+                    <div class="progress-bar">
+                        <div id="progress-c" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+            <p id="total-votes">Total Votes: 0</p>
+            <button onclick="location.reload()" class="refresh-btn">🔄 Refresh Results</button>
+        </div>
+    </div>
+
+    <script src="/script.js"></script>
+</body>
+</html>

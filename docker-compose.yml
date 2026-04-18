@@ -1,11 +1,24 @@
 version: '3.8'
 
 services:
-  frontend:
-    build: ./frontend
-    container_name: voting-frontend
+  redis:
+    image: redis:7.2-alpine
+    container_name: voting-redis
     ports:
-      - "3000:3000"
+      - "6379:6379"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: voting-postgres
+    environment:
+      POSTGRES_USER: voting_app
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: votingdb
+    ports:
+      - "5432:5432"
     networks:
       - app-network
     restart: unless-stopped
@@ -16,8 +29,8 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - REDIS_HOST=redis
-      - POSTGRES_HOST=postgres
+      REDIS_HOST: redis
+      POSTGRES_HOST: postgres
     depends_on:
       - redis
       - postgres
@@ -29,32 +42,24 @@ services:
     build: ./worker
     container_name: voting-worker
     environment:
-      - REDIS_HOST=redis
-      - POSTGRES_HOST=postgres
+      REDIS_HOST: redis
+      POSTGRES_HOST: postgres
     depends_on:
       - redis
       - postgres
-      - api
-    networks:
-      - app-network
-    restart: unless-stopped
-    deploy:
-      replicas: 1
-
-  redis:
-    image: redis:7.2-alpine
-    container_name: voting-redis
     networks:
       - app-network
     restart: unless-stopped
 
-  postgres:
-    image: postgres:15-alpine
-    container_name: voting-postgres
+  frontend:
+    build: ./frontend
+    container_name: voting-frontend
+    ports:
+      - "3000:3000"
     environment:
-      - POSTGRES_USER=voting_app
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=votingdb
+      API_URL: http://api:8080
+    depends_on:
+      - api
     networks:
       - app-network
     restart: unless-stopped
